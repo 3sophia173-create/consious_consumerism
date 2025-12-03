@@ -96,20 +96,22 @@
 
             <div class="code-title">sentiment_analysis.py</div>
             <pre><code>from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-import pandas as pd
 
+# Im installing the sentiment analyzer
 analyzer = SentimentIntensityAnalyzer()
 
-# Analyze sentiment for each text
-df['compound'] = df['text'].apply(
-    lambda x: analyzer.polarity_scores(x)['compound']
+# Calculate compound sentiment score for each review
+df['sentiment_score'] = df['review_clean'].apply(lambda x: analyzer.polarity_scores(x)['compound'])
+
+# Categorize sentiment
+df['sentiment_label'] = df['sentiment_score'].apply(
+    lambda x: 'positive' if x > 0.05 else ('negative' if x < -0.05 else 'neutral')
 )
 
-# Classify sentiment
-df['sentiment'] = df['compound'].apply(
-    lambda x: 'positive' if x > 0.05
-    else ('negative' if x < -0.05 else 'neutral')
-)</code></pre>
+# Show distribution of sentiment labels
+df['sentiment_label'].value_counts()from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+
+</code></pre>
 
             <h3>Topic Modeling Results</h3>
             <p>Using Gensim's LDA implementation, I identified [number] major topics...</p>
@@ -159,23 +161,54 @@ df['sentiment'] = df['compound'].apply(
                         <td>Positive</td>
                         <td>541</td>
                         <td>66.10%</td>
-                        <td>0.XX</td>
+                        <td>0.212</td>
                     </tr>
                     <tr>
                         <td>Neutral</td>
                         <td>119</td>
                         <td>14.51%</td>
-                        <td>0.XX</td>
+                        <td>0.727</td>
                     </tr>
                     <tr>
                         <td>Negative</td>
                         <td>160</td>
                         <td>19.41%</td>
-                        <td>-0.XX</td>
+                        <td>-0.05</td>
                     </tr>
                 </tbody>
             </table>
 
+
+             <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Sentiment Category Kaggle</th>
+                        <th>Count</th>
+                        <th>Percentage</th>
+                        <th>Avg. Compound Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="highlight">
+                        <td>Positive</td>
+                        <td>21042</td>
+                        <td>92.95%</td>
+                        <td>0.21</td>
+                    </tr>
+                    <tr>
+                        <td>Neutral</td>
+                        <td>264</td>
+                        <td>1.17%</td>
+                        <td>0.75</td>
+                    </tr>
+                    <tr>
+                        <td>Negative</td>
+                        <td>1335</td>
+                        <td>5.90%</td>
+                        <td>-0.03</td>
+                    </tr>
+                </tbody>
+            </table>
             <h3>What Surprised Me</h3>
             <p>I initially predicted that most of the reviews would be negative, but the data revealed that she was positevly supported in dressing modestly in the gym.
                  This challenged my understanding because I feel like women are shamed for being "too modest" so it was really great to see her being supported for choosing modesty in the gym. 
